@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd src
+
 # Build the project
 BUILD_DIR=../build
 
