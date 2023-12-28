@@ -16,16 +16,26 @@ if [ ! -d "$BUILD_DIR" ]; then
 fi
 
 # Build go binaries
-# go.mod -> src
+echo "Building go binaries..."
+echo "Building for linux (amd64)..."
+GOOS=linux GOARCH=amd64 go build -o $BUILD_DIR/linux/amd64/ ./...
+echo "Building for linux (arm64)..."
+GOOS=linux GOARCH=arm64 go build -o $BUILD_DIR/linux/arm64/ ./...
+echo "Building for linux (arm)..."
+GOOS=linux GOARCH=arm go build -o $BUILD_DIR/linux/arm/ ./...
 
-GOOS=linux GOARCH=amd64 go build -o $BUILD_DIR/linux/amd64/ ./src
-GOOS=linux GOARCH=arm64 go build -o $BUILD_DIR/linux/arm64/ ./src
-GOOS=linux GOARCH=arm go build -o $BUILD_DIR/linux/arm/ ./src
+echo "Building for mac (amd64)..."
+GOOS=darwin GOARCH=amd64 go build -o $BUILD_DIR/mac/amd64/ ./...
+echo "Building for mac (arm64)..."
+GOOS=darwin GOARCH=arm64 go build -o $BUILD_DIR/mac/arm64/ ./
 
-GOOS=darwin GOARCH=amd64 go build -o $BUILD_DIR/mac/amd64/ ./src
-GOOS=darwin GOARCH=arm64 go build -o $BUILD_DIR/mac/arm64/ ./src
+echo "Building for windows (amd64)..."
+GOOS=windows GOARCH=amd64 go build -o $BUILD_DIR/windows/amd64/ ./...
+echo "Building for windows (386)..."
+GOOS=windows GOARCH=386 go build -o $BUILD_DIR/windows/386/ ./...
+echo "Building for windows (arm64)..."
+GOOS=windows GOARCH=arm64 go build -o $BUILD_DIR/windows/arm64/ ./...
+echo "Building for windows (arm)..."
+GOOS=windows GOARCH=arm go build -o $BUILD_DIR/windows/arm/ ./...
 
-GOOS=windows GOARCH=amd64 go build -o $BUILD_DIR/windows/amd64/ ./src
-GOOS=windows GOARCH=386 go build -o $BUILD_DIR/windows/386/ ./src
-GOOS=windows GOARCH=arm64 go build -o $BUILD_DIR/windows/arm64/ ./src
-GOOS=windows GOARCH=arm go build -o $BUILD_DIR/windows/arm/ ./src
+echo "Build complete!"
