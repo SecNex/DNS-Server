@@ -18,3 +18,21 @@ func NewDomain(name string) DnsDomain {
 func (r *DnsRegistry) AddDomain(d DnsDomain) {
 	r.Domains = append(r.Domains, d)
 }
+
+func (r *DnsRegistry) GetDomain(name string) (DnsDomain, bool) {
+	for _, d := range r.Domains {
+		if d.Name == name {
+			return d, true
+		}
+	}
+	return DnsDomain{}, false
+}
+
+// UpdateDomain updates the domain with the given name.
+func (r *DnsRegistry) UpdateDomain(name string, d DnsDomain) {
+	for i, domain := range r.Domains {
+		if domain.Name == name {
+			r.Domains[i] = d
+		}
+	}
+}
