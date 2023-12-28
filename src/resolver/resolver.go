@@ -1,11 +1,18 @@
 package resolver
 
+import (
+	"fmt"
+	"net"
+)
+
 type DnsForwarding struct {
 	Enabled bool   `json:"enabled"`
 	Server  string `json:"server"`
 }
 
 type DnsRegistry struct {
+	Host        string          `json:"host"`
+	Port        int             `json:"port"`
 	Domains     []DnsDomain     `json:"domains"`
 	Forwarding  DnsForwarding   `json:"forwarding"`
 	RootServers []DnsRootServer `json:"rootServers"`
@@ -105,8 +112,10 @@ var RootServers = []DnsRootServer{
 	},
 }
 
-func NewRegistry() DnsRegistry {
+func NewRegistry(host string, port int) DnsRegistry {
 	return DnsRegistry{
+		Host:        host,
+		Port:        port,
 		Domains:     []DnsDomain{},
 		Forwarding:  newForwarding(false, "8.8.8.8"),
 		RootServers: RootServers,
@@ -118,6 +127,35 @@ func newForwarding(enabled bool, server string) DnsForwarding {
 		Enabled: enabled,
 		Server:  server,
 	}
+}
+
+func (r *DnsRegistry) Start() {
+	cnx, err := newListener(r.Host, r.Port)
+	if err != nil {
+		panic(err)
+	}
+	defer cnx.Close()
+
+	buf := make([]byte, 512)
+	for {
+		n, addr, err := cnx.ReadFromUDP(buf)
+		if err != nil {
+			panic(err)
+		}
+		go r.handleQuery(cnx, addr, buf[:n])
+	}
+}
+
+func (r *DnsRegistry) handleQuery(cnx *net.UDPConn, addr *net.UDPAddr, buf []byte) {
+	fmt.Println("Received query from", addr)
+}
+
+func newListener(host string, port int) (*net.UDPConn, error) {
+	addr := net.UDPAddr{
+		Port: port,
+		IP:   net.ParseIP(host),
+	}
+	return net.ListenUDP("udp", &addr)
 }
 
 func (f *DnsForwarding) SetForwarding(enabled bool, server string) {
