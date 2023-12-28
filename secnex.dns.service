@@ -1,0 +1,10 @@
+[Unit]
+Description=SecNex DNS Server
+After=network.target
+
+[Service]
+ExecStart=sudo /opt/secnex/bin/dns
+Restart=always
+
+[Install]
+WantedBy=multi-user.targets
