@@ -6,6 +6,8 @@ type DnsForwarding struct {
 }
 
 type DnsRegistry struct {
+	Host        string          `json:"host"`
+	Port        int             `json:"port"`
 	Domains     []DnsDomain     `json:"domains"`
 	Forwarding  DnsForwarding   `json:"forwarding"`
 	RootServers []DnsRootServer `json:"rootServers"`
@@ -105,8 +107,10 @@ var RootServers = []DnsRootServer{
 	},
 }
 
-func NewRegistry() DnsRegistry {
+func NewRegistry(host string, port int) DnsRegistry {
 	return DnsRegistry{
+		Host:        host,
+		Port:        port,
 		Domains:     []DnsDomain{},
 		Forwarding:  newForwarding(false, "8.8.8.8"),
 		RootServers: RootServers,

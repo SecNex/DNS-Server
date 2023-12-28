@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	registry := resolver.NewRegistry()
+	registry := resolver.NewRegistry("0.0.0.0", 53)
 	domain := resolver.NewDomain("bytie.lab")
 	domain.AddA("@", "10.100.0.1", 300)
 	domain.AddCNAME("www", "bytie.lab", 300)
