@@ -68,9 +68,7 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: "1.21.5"
-    - run: |
-        bash build.sh
-
+    - run: go build -v ./...
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
 
