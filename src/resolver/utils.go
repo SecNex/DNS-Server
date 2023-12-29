@@ -27,9 +27,12 @@ func ReverseIP(ip string) string {
 	return strings.Join(reversedParts, ".")
 }
 
-func CheckIfRoot(q string) bool {
+func GetRecordName(q string) string {
+	// Check if the query is home.lab not record.home.lab
 	parts := strings.Split(q, ".")
-	// Remove the last empty string
-	parts = parts[:len(parts)-1]
-	return len(parts) == 2
+	if len(parts) == 2 {
+		return "@"
+	} else {
+		return strings.Join(parts[:len(parts)-2], ".")
+	}
 }

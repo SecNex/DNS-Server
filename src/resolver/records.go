@@ -1,6 +1,6 @@
 package resolver
 
-func (d *DnsDomain) AddA(name string, value string, ttl int) {
+func (d *DnsDomain) AddA(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -10,7 +10,7 @@ func (d *DnsDomain) AddA(name string, value string, ttl int) {
 	d.A = append(d.A, record)
 }
 
-func (d *DnsDomain) AddAAAA(name string, value string, ttl int) {
+func (d *DnsDomain) AddAAAA(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -20,7 +20,7 @@ func (d *DnsDomain) AddAAAA(name string, value string, ttl int) {
 	d.AAAA = append(d.AAAA, record)
 }
 
-func (d *DnsDomain) AddCNAME(name string, value string, ttl int) {
+func (d *DnsDomain) AddCNAME(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -30,7 +30,7 @@ func (d *DnsDomain) AddCNAME(name string, value string, ttl int) {
 	d.CNAME = append(d.CNAME, record)
 }
 
-func (d *DnsDomain) AddMX(name string, value string, ttl int, pref uint16) {
+func (d *DnsDomain) AddMX(name string, value string, ttl uint32, pref uint16) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -40,7 +40,7 @@ func (d *DnsDomain) AddMX(name string, value string, ttl int, pref uint16) {
 	d.MX = append(d.MX, record)
 }
 
-func (d *DnsDomain) AddNS(name string, value string, ttl int) {
+func (d *DnsDomain) AddNS(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -50,7 +50,7 @@ func (d *DnsDomain) AddNS(name string, value string, ttl int) {
 	d.NS = append(d.NS, record)
 }
 
-func (d *DnsDomain) AddPTR(name string, value string, ttl int) {
+func (d *DnsDomain) AddPTR(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -60,7 +60,7 @@ func (d *DnsDomain) AddPTR(name string, value string, ttl int) {
 	d.PTR = append(d.PTR, record)
 }
 
-func (d *DnsDomain) AddSOA(name string, value string, ttl int) {
+func (d *DnsDomain) AddSOA(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -70,7 +70,7 @@ func (d *DnsDomain) AddSOA(name string, value string, ttl int) {
 	d.SOA = append(d.SOA, record)
 }
 
-func (d *DnsDomain) AddSRV(name string, value string, ttl int, pref uint16) {
+func (d *DnsDomain) AddSRV(name string, value string, ttl uint32, pref uint16) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
@@ -80,7 +80,7 @@ func (d *DnsDomain) AddSRV(name string, value string, ttl int, pref uint16) {
 	d.SRV = append(d.SRV, record)
 }
 
-func (d *DnsDomain) AddTXT(name string, value string, ttl int) {
+func (d *DnsDomain) AddTXT(name string, value string, ttl uint32) {
 	record := DnsRecord{
 		Name:  name,
 		Value: value,
