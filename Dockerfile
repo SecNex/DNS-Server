@@ -18,8 +18,8 @@ FROM --platform=arm64 debian:latest
 
 # Shell = /bin/bash
 
-ENV SHELL /bin/bash
-RUN apt-get update && apt-get install -y ca-certificates
+# ENV SHELL /bin/bash
+# RUN apt-get update && apt-get install -y ca-certificates
 
 COPY --from=builder /go/bin/server /server
 COPY ./config.json /config.json
