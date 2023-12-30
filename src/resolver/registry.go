@@ -37,10 +37,11 @@ type DnsDomain struct {
 }
 
 type DnsRecord struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-	TTL   uint32 `json:"ttl"`
-	Pref  uint16 `json:"pref"`
+	Name  string          `json:"name"`
+	Value string          `json:"value"`
+	TTL   uint32          `json:"ttl"`
+	Pref  uint16          `json:"pref"`
+	Type  dnsmessage.Type `json:"type"`
 }
 
 type DnsRootServer struct {
@@ -155,7 +156,7 @@ func (r *DnsRegistry) handleQuery(cnx *net.UDPConn, addr *net.UDPAddr, buf []byt
 	response.Header.Response = true
 	response.Header.RecursionDesired = true
 	response.Header.RecursionAvailable = true
-	response.Header.Authoritative = true
+	response.Header.Authoritative = false
 	response.Questions = msg.Questions
 	response.Answers = []dnsmessage.Resource{}
 	response.Authorities = []dnsmessage.Resource{}
@@ -169,16 +170,29 @@ func (r *DnsRegistry) handleQuery(cnx *net.UDPConn, addr *net.UDPAddr, buf []byt
 		if !r.Blocker.IsBlocked(queryName) {
 			// Check if the domain is configured
 			d, ok := r.GetDomain(queryName)
+			fmt.Printf("Query for %s (%s)\n", queryName, question.Type)
 			if ok {
 				recordQueryName := GetRecordName(queryName)
 				record, ok := d.GetRecord(recordQueryName, question.Type)
+				fmt.Printf("Record: %s\n", record.Name)
+				// If record type of question of A or AAAA but not found, check for CNAME
+				if (question.Type == dnsmessage.TypeA || question.Type == dnsmessage.TypeAAAA) && (record.Type == dnsmessage.TypeCNAME) {
+					question.Type = dnsmessage.TypeCNAME
+				}
 				if ok {
 					response.Answers = append(response.Answers, record.CreateAnswer(question))
 				} else {
 					response.Answers = []dnsmessage.Resource{}
 				}
+				ns, ok := d.GetRecord("@", dnsmessage.TypeNS)
+				if ok {
+					authority := ns.CreateAuthority(question)
+					response.Authorities = append(response.Authorities, authority)
+					response.Authoritative = true
+				}
 			} else {
 				if r.Forwarding.Enabled {
+					fmt.Printf("Forwarding query for %s (%s) -> %s\n", question.Name.String(), question.Type, r.Forwarding.Server)
 					answer, err := r.Forwarding.Client.Query(question)
 					if err != nil {
 						panic(err)
@@ -194,6 +208,7 @@ func (r *DnsRegistry) handleQuery(cnx *net.UDPConn, addr *net.UDPAddr, buf []byt
 	}
 	buf, err = response.Pack()
 	if err != nil {
+		fmt.Printf("Error: %s\n", err)
 		panic(err)
 	}
 	_, err = cnx.WriteToUDP(buf, addr)

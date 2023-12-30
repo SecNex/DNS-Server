@@ -57,6 +57,12 @@ func (d *DnsDomain) GetRecord(name string, t dnsmessage.Type) (DnsRecord, bool) 
 				return record, true
 			}
 		}
+		// Fallback to CNAME
+		for _, record := range d.CNAME {
+			if record.Name == name {
+				return record, true
+			}
+		}
 	case dnsmessage.TypeAAAA:
 		for _, record := range d.AAAA {
 			if record.Name == name {
@@ -64,7 +70,9 @@ func (d *DnsDomain) GetRecord(name string, t dnsmessage.Type) (DnsRecord, bool) 
 			}
 		}
 	case dnsmessage.TypeCNAME:
+		fmt.Printf("Looking for %s\n", name)
 		for _, record := range d.CNAME {
+			fmt.Printf("Record: %s\n", record.Name)
 			if record.Name == name {
 				return record, true
 			}
@@ -201,4 +209,18 @@ func (r *DnsRecord) CreateAnswer(q dnsmessage.Question) dnsmessage.Resource {
 		}
 	}
 	return dnsmessage.Resource{}
+}
+
+// CreateAuthority creates an authority for the given question.
+func (r *DnsRecord) CreateAuthority(q dnsmessage.Question) dnsmessage.Resource {
+	fmt.Printf("Creating authority for %s -> %s\n", q.Name.String(), r.Value)
+	return dnsmessage.Resource{
+		Header: dnsmessage.ResourceHeader{
+			Name:  q.Name,
+			Type:  dnsmessage.TypeNS,
+			Class: dnsmessage.ClassINET,
+			TTL:   r.TTL,
+		},
+		Body: &dnsmessage.NSResource{NS: dnsmessage.MustNewName(r.Value)},
+	}
 }
