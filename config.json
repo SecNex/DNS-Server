@@ -1,0 +1,22 @@
+{
+    "server": {
+        "host": "0.0.0.0",
+        "port": 3000
+    },
+    "resolver": {
+        "host": "0.0.0.0",
+        "port": 53,
+        "forwarding": {
+            "enabled": true,
+            "server": "1.1.1.1"
+        },
+        "blocker": {
+            "lists": [
+                {
+                    "name": "StevenBlack",
+                    "url": "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+                }
+            ]
+        }
+    }
+}

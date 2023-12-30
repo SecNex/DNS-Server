@@ -1,25 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"os"
-	"strconv"
 
-	"github.com/secnex/dns-server/resolver"
+	"github.com/secnex/dns-server/config"
 )
 
 func main() {
-	host := os.Args[1]
-	port, err := strconv.ParseInt(os.Args[2], 10, 32)
-	if err != nil {
-		panic(err)
+	configFile := "config.json"
+	if len(os.Args) > 1 {
+		configFile = os.Args[1]
 	}
-	forwarding := ""
-	if len(os.Args) > 3 {
-		forwarding = os.Args[3]
+
+	// Read config
+	file := config.NewConfigReader(configFile)
+	config, found := file.Read()
+	if !found {
+		fmt.Printf("Config file %s not found\n", configFile)
+		os.Exit(1)
 	}
-	registry := resolver.NewRegistry(host, int(port))
-	registry.Forwarding.SetForwarding(forwarding != "", forwarding)
-	registry.Blocker.AddList("StevenBlack", "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts")
-	registry.Blocker.Sync()
+	registry := config.NewRegistry()
 	registry.Start()
 }
