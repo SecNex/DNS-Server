@@ -1,20 +1,21 @@
-FROM --platform=arm64 golang:latest AS builder
+FROM golang:latest AS builder
+
+COPY ./src/go.mod ./src/go.sum ./
+
+WORKDIR /go/src
+
+RUN go mod download && go mod verify
 
 # Copy the local package files to the container's workspace.
 COPY ./src /go/src
 
-WORKDIR /go/src
-
 # Build the outyet command inside the container.
-RUN ["go", "install"]
 
 ENV GOOS=linux
-ENV GOARCH=arm64
-
-RUN ["go", "build", "-o", "/go/bin/server"]
+ENV GOARCH=amd64
 
 # Path: Dockerfile
-FROM --platform=arm64 debian:latest AS final
+FROM debian:latest AS final
 
 COPY --from=builder /go/bin/server /server
 COPY ./config.json /config.json
