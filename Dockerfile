@@ -6,12 +6,12 @@ COPY ./src /go/src
 WORKDIR /go/src
 
 # Build the outyet command inside the container.
-RUN go install
+RUN ["go", "install"]
 
 ENV GOOS=linux
 ENV GOARCH=arm64
 
-RUN GOOS=linux GOARCH=arm64 go build -o /go/bin/server
+RUN ["go", "build", "-o", "/go/bin/server"]
 
 # Path: Dockerfile
 FROM --platform=arm64 debian:latest AS final
