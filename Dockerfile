@@ -15,8 +15,20 @@ RUN go build -v -o /tmp/app
 # Path: Dockerfile
 FROM ubuntu:latest
 
+RUN apt-get update && apt-get install -y ca-certificates
+
 COPY --from=builder /tmp/app /usr/local/bin/app
 
 COPY ./config.json /etc/config.json
 
 ENTRYPOINT ["/usr/local/bin/app", "/etc/config.json"]
+
+# FROM alpine:latest
+
+# RUN apk update && apk add --no-cache ca-certificates
+
+# COPY --from=builder /tmp/app /usr/local/bin/app
+
+# COPY ./config.json /etc/config.json
+
+# ENTRYPOINT ["/usr/local/bin/app", "/etc/config.json"]

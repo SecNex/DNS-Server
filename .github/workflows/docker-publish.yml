@@ -9,7 +9,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push-image:
+  build-and-push-image-amd64:
+    name: Build and push image for amd64
     runs-on: ubuntu-latest
     permissions:
       contents: read
