@@ -3,8 +3,6 @@ package config
 import (
 	"encoding/json"
 	"os"
-
-	"github.com/secnex/dns-server/resolver"
 )
 
 type ConfigReader struct {
@@ -14,6 +12,7 @@ type ConfigReader struct {
 type ConfigFile struct {
 	Server   ServerConfig   `json:"server"`
 	Resolver ResolverConfig `json:"resolver"`
+	Backend  BackendConfig  `json:"backend"`
 }
 
 type ServerConfig struct {
@@ -26,6 +25,14 @@ type ResolverConfig struct {
 	Port       int              `json:"port"`
 	Forwarding ForwardingConfig `json:"forwarding"`
 	Blocker    BlockerConfig    `json:"blocker"`
+}
+
+type BackendConfig struct {
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Database string `json:"database"`
 }
 
 type ForwardingConfig struct {
@@ -66,14 +73,4 @@ func (c *ConfigReader) Read() (ConfigFile, bool) {
 	}
 
 	return config, true
-}
-
-func (c *ConfigFile) NewRegistry() resolver.DnsRegistry {
-	reg := resolver.NewRegistry(c.Resolver.Host, c.Resolver.Port)
-	reg.Forwarding.SetForwarding(c.Resolver.Forwarding.Enabled, c.Resolver.Forwarding.Server)
-	for _, list := range c.Resolver.Blocker.Lists {
-		reg.Blocker.AddList(list.Name, list.Url)
-	}
-	reg.Blocker.Sync()
-	return reg
 }

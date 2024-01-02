@@ -6,16 +6,9 @@ import (
 	"strings"
 )
 
-func newRandom(len int) int {
+func NewRandom(len int) int {
 	n, _ := rand.Int(rand.Reader, big.NewInt(int64(len)))
 	return int(n.Int64())
-}
-
-func RandomRootServer(r *DnsRegistry) DnsRootServer {
-	len := len(r.RootServers)
-	// Random number generator (0 - len)
-	random := newRandom(len)
-	return r.RootServers[random]
 }
 
 func ReverseIP(ip string) string {
@@ -29,10 +22,29 @@ func ReverseIP(ip string) string {
 
 func GetRecordName(q string) string {
 	// Check if the query is home.lab not record.home.lab
-	parts := strings.Split(q, ".")
+	parts := strings.Split(q, ".")[:len(strings.Split(q, "."))-1]
 	if len(parts) == 2 {
 		return "@"
 	} else {
 		return strings.Join(parts[:len(parts)-2], ".")
+	}
+}
+
+func GetDomainName(q string) string {
+	// record.home.lab. -> home.lab.
+	parts := strings.Split(q, ".")[:len(strings.Split(q, "."))-1]
+	if len(parts) == 2 {
+		return q
+	} else {
+		return strings.Join(parts[len(parts)-2:], ".") + "."
+	}
+}
+
+func IsSubdomain(v string) bool {
+	parts := strings.Split(v, ".")[:len(strings.Split(v, "."))-1]
+	if len(parts) > 2 {
+		return true
+	} else {
+		return false
 	}
 }

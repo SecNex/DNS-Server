@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/secnex/dns-server/config"
+	"github.com/secnex/dns-server/resolver"
 )
 
 func main() {
@@ -20,6 +21,9 @@ func main() {
 		fmt.Printf("Config file %s not found\n", configFile)
 		os.Exit(1)
 	}
-	registry := config.NewRegistry()
-	registry.Start()
+
+	fmt.Printf("Server: %s:%d\n", config.Resolver.Host, config.Resolver.Port)
+
+	resolver := resolver.NewDNSResolver(config)
+	resolver.Listen()
 }
